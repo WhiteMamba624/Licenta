@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "900703539748",
+    "project_id": "licenta-2e796",
+    "storage_bucket": "licenta-2e796.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:900703539748:android:42b6d12f1dfc5eb3407eb1",
+        "android_client_info": {
+          "package_name": "com.gligamihai.licenta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "900703539748-6mhb5n3uepvor7v4ofoaem957flnni5p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8MsW_JZcOZOXgMTIX2nCEHTVTxR0Efcw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "900703539748-6mhb5n3uepvor7v4ofoaem957flnni5p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
