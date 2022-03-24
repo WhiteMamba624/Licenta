@@ -10,8 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Licenta">
         <activity
-            android:name=".licenta.ui.RegisterActivity"
+            android:name=".licenta.ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".licenta.ui.RegisterActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".licenta.SplashActivity"
             android:theme="@style/SplashTheme">
@@ -23,7 +26,8 @@
         </activity>
         <activity
             android:name=".licenta.ui.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>
