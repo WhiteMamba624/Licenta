@@ -2,12 +2,13 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="120dp"
     android:layout_marginStart="8dp"
     android:layout_marginTop="8dp"
     android:layout_marginEnd="8dp"
     android:elevation="8dp"
-    app:cardCornerRadius="8dp">
+    app:cardCornerRadius="8dp"
+    android:id="@+id/cardViewDocumentItem">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,7 +22,6 @@
             android:layout_width="92dp"
             android:layout_height="92dp"
             android:layout_margin="16dp"
-            android:src="@drawable/rca"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -36,6 +36,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/document_image"
             app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/document_type"
+            app:layout_constraintStart_toStartOf="@id/document_type"
+            android:id="@+id/document_test"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="8sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/document_type"
+            app:layout_constraintStart_toStartOf="@id/document_type"
+            android:id="@+id/document_expiry_date"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
