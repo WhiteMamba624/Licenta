@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Nu a mers", Toast.LENGTH_SHORT).show();
         }
         setUpRecyclerView();
-        FloatingActionButton fab=findViewById(R.id.addDocumentButton);
+        FloatingActionButton fab=findViewById(R.id.addDocumentFab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         openDrawer(drawerLayout);
     }
 
-    private static void openDrawer(DrawerLayout drawerLayout) {
+    public static void openDrawer(DrawerLayout drawerLayout) {
         drawerLayout.openDrawer(GravityCompat.START);
     }
 
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         closeDrawer(drawerLayout);
     }
 
-    private static void closeDrawer(DrawerLayout drawerLayout) {
+    public static void closeDrawer(DrawerLayout drawerLayout) {
         //Close drawer layout
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -183,8 +183,11 @@ public class MainActivity extends AppCompatActivity {
         recreate();
     }
 
-    public void clickLogout(View view) {
-        AlertDialog.Builder alertLogout = new AlertDialog.Builder(this);
+    public void clickWeather(View view){
+        startActivity(new Intent(MainActivity.this,WeatherActivity.class));
+    }
+    public  void clickLogout(View view) {
+        AlertDialog.Builder alertLogout = new AlertDialog.Builder(view.getContext());
         alertLogout.setTitle("Logout");
         alertLogout.setMessage("Are you sure you want to log out?");
         alertLogout.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -192,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 //TODO make a method for this code
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                Intent intent = new Intent(view.getContext(), LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);

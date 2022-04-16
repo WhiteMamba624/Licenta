@@ -3,10 +3,13 @@ package com.gligamihai.licenta.licenta.ui;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,11 +25,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Calendar;
+
 import static com.gligamihai.licenta.licenta.ui.MainActivity.INTENT_DOCUMENT_ID;
 
 public class UpdateDocumentActivity extends AppCompatActivity {
+
+    final Calendar calendar = Calendar.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    TextView documentType;
+    EditText updateDocumentType;
+    EditText updateDocumentPlateNumber;
+    EditText updateDocumentExpiryDate;
+    EditText updateDocumentVinNumber;
     Button updateButton;
     public String id = null;
 
@@ -37,13 +47,20 @@ public class UpdateDocumentActivity extends AppCompatActivity {
         if (getIntent() != null) {
             id = getIntent().getStringExtra(INTENT_DOCUMENT_ID);
         }
-        documentType = findViewById(R.id.editTextUpdateType);
-        updateButton = findViewById(R.id.button_update_document);
+        updateDocumentType = findViewById(R.id.editTextUpdateType);
+        updateDocumentPlateNumber=findViewById(R.id.editTextUpdatePlateNumber);
+        updateDocumentExpiryDate=findViewById(R.id.editTextUpdateExpiryDate);
+        updateDocumentVinNumber=findViewById(R.id.editTextUpdateVinNumber);
+        updateButton = findViewById(R.id.updateDocumentButton);
         getDocument(id);
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Document document = new Document(documentType.getText().toString().trim());
+                Document document = new Document();
+                document.setType(updateDocumentType.getText().toString().trim());
+                document.setPlateNumber(updateDocumentPlateNumber.getText().toString().trim());
+                document.setExpiryDate(updateDocumentExpiryDate.getText().toString().trim());
+                document.setVinNumber(updateDocumentVinNumber.getText().toString().trim());
                 updateDocument(document );
             }
         });
@@ -58,7 +75,10 @@ public class UpdateDocumentActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Document document = documentSnapshot.toObject(Document.class);
-                documentType.setText(document.getType());
+                updateDocumentType.setText(document.getType());
+                updateDocumentPlateNumber.setText(document.getPlateNumber());
+                updateDocumentExpiryDate.setText(document.getExpiryDate());
+                updateDocumentVinNumber.setText(document.getVinNumber());
             }
         });
     }
@@ -85,5 +105,28 @@ public class UpdateDocumentActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         startActivity(new Intent(UpdateDocumentActivity.this,MainActivity.class));
+    }
+
+    public void datePicker(View view) {
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+                        updateDocumentExpiryDate.setText(String.format("%d-%d-%d", dayOfMonth, monthOfYear + 1, year));
+
+                    }
+                }, year, month, day);
+        datePickerDialog.show();
+    }
+
+
+    public void goToMainActivity(View view) {
+        onBackPressed();
     }
 }
