@@ -214,4 +214,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent=new Intent(MainActivity.this, AddDocumentActivity.class);
         startActivity(intent);
     }
+
+    public void clickPlaces(View view){
+        startActivity(new Intent(MainActivity.this,PlacesActivity.class));
+    }
 }
