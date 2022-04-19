@@ -14,9 +14,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Licenta">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_map_key"/>
+        <activity
+            android:name=".licenta.ui.PlacesActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".licenta.ui.WeatherActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".licenta.ui.UpdateDocumentActivity"
             android:theme="@style/AppTheme.NoActionBar" />
