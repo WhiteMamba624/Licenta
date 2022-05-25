@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import com.gligamihai.licenta.BuildConfig;
 import com.gligamihai.licenta.R;
 import com.gligamihai.licenta.licenta.utils.JsonParser;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -124,7 +125,8 @@ public class PlacesActivity extends AppCompatActivity {
                             "&radius=5000" +
                             "&types=" + placeTypeList[i] +
                             "&sensor=true" +
-                            "&key=" + getResources().getString(R.string.google_map_key);
+                            "&key=" + BuildConfig.MAPS_API_KEY;
+                          //  getResources().getString(R.string.google_map_key);
 
                     new PlaceTask().execute(url);
             }
@@ -235,7 +237,6 @@ public class PlacesActivity extends AppCompatActivity {
         alertLogout.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO make a method for this code
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(view.getContext(), LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

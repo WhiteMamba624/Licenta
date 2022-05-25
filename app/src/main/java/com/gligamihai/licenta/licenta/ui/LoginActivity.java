@@ -4,10 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -37,17 +40,19 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loginButton.startAnimation();
-                String loginEmail = email.getText().toString().trim();
-                String loginPassword = password.getText().toString().trim();
-                if (loginEmail.isEmpty() || loginPassword.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Please make sure that there are no empty fields", Toast.LENGTH_SHORT).show();
-                } else {
-                    loginUser(loginEmail, loginPassword);
-                    // loginButton.doneLoadingAnimation(Color.parseColor("#00ADC1"), BitmapFactory.decodeResource(getResources(),R.drawable.ic_baseline_check_24));
-                    loginButton.revertAnimation();
-                    email.getText().clear();
-                    password.getText().clear();
+                if (checkNetworkConnection()) {
+                    loginButton.startAnimation();
+                    String loginEmail = email.getText().toString().trim();
+                    String loginPassword = password.getText().toString().trim();
+                    if (loginEmail.isEmpty() || loginPassword.isEmpty()) {
+                        Toast.makeText(LoginActivity.this, "Please make sure that there are no empty fields", Toast.LENGTH_SHORT).show();
+                    } else {
+                        loginUser(loginEmail, loginPassword);
+                        // loginButton.doneLoadingAnimation(Color.parseColor("#00ADC1"), BitmapFactory.decodeResource(getResources(),R.drawable.ic_baseline_check_24));
+                        loginButton.revertAnimation();
+                        email.getText().clear();
+                        password.getText().clear();
+                    }
                 }
             }
         });
@@ -118,4 +123,20 @@ public class LoginActivity extends AppCompatActivity {
     private void goToMainActivity() {
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
     }
+    private boolean checkNetworkConnection()
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo != null)
+        {
+            return true;
+        }
+        else
+        {
+            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
 }

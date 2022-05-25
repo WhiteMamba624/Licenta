@@ -43,20 +43,16 @@ public class RegisterActivity extends AppCompatActivity {
         Button registerButton = findViewById(R.id.registerButton);
 
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                User user = new User(name.getText().toString().trim(), email.getText().toString().trim(), phoneNumber.getText().toString().trim(), password.getText().toString().trim());
-                //TODO treat all exceptions
-                if (isValidEmail(user.getEmail()) && isValidPassword(user.getPassword())) {
-                    registerUser(user);
-                } else if (user.getEmail().isEmpty() || user.getPassword().isEmpty()) {
-                    Toast.makeText(RegisterActivity.this, "Please make sure that there are no empty fields", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(RegisterActivity.this, "Invalid email or password format", Toast.LENGTH_SHORT).show();
-                }
-
+        registerButton.setOnClickListener(v -> {
+            User user = new User(name.getText().toString().trim(), email.getText().toString().trim(), phoneNumber.getText().toString().trim(), password.getText().toString().trim());
+            if (isValidEmail(user.getEmail()) && isValidPassword(user.getPassword())&& !user.getName().isEmpty() && !user.getPhoneNumber().isEmpty()) {
+                registerUser(user);
+            } else if (user.getEmail().isEmpty() || user.getPassword().isEmpty() || user.getPhoneNumber().isEmpty() ||user.getName().isEmpty()) {
+                Toast.makeText(RegisterActivity.this, "Please make sure that there are no empty fields", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(RegisterActivity.this, "Invalid email or password format", Toast.LENGTH_SHORT).show();
             }
+
         });
 
     }
@@ -67,15 +63,12 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        addUserToDatabase(user);
-                                        onBackPressed();
-                                    } else {
-                                        Toast.makeText(RegisterActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
+                            mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    addUserToDatabase(user);
+                                    onBackPressed();
+                                } else {
+                                    Toast.makeText(RegisterActivity.this, task1.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
 
@@ -118,14 +111,11 @@ public class RegisterActivity extends AppCompatActivity {
         user.setPassword("");
         db.collection("Users").document(mAuth.getInstance().getUid())
                 .set(user)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(RegisterActivity.this, "User added to firestore", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(RegisterActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(RegisterActivity.this, "User added to firestore", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(RegisterActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 

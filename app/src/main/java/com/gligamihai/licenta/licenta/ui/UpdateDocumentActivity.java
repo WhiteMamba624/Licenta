@@ -22,10 +22,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.gligamihai.licenta.licenta.ui.MainActivity.INTENT_DOCUMENT_ID;
 
@@ -61,11 +64,34 @@ public class UpdateDocumentActivity extends AppCompatActivity {
                 document.setPlateNumber(updateDocumentPlateNumber.getText().toString().trim());
                 document.setExpiryDate(updateDocumentExpiryDate.getText().toString().trim());
                 document.setVinNumber(updateDocumentVinNumber.getText().toString().trim());
-                updateDocument(document );
+                document.setDeviceToken(FirebaseMessaging.getInstance().getToken().toString());
+                dataValidation(document);
             }
         });
     }
-
+    public void dataValidation(Document document) {
+        if(!document.getType().isEmpty()){
+            if(document.getType().equalsIgnoreCase("ITP")|| document.getType().equalsIgnoreCase("Rovinietta") || document.getType().equalsIgnoreCase("RCA")){
+                if(!document.getPlateNumber().isEmpty()&&!plateNumberValidate(document.getPlateNumber())){
+                    if(!document.getExpiryDate().isEmpty()){
+                        if(!document.getVinNumber().isEmpty()&&document.getVinNumber().length()<17){
+                            updateDocument(document);
+                        }else{
+                            Toast.makeText(UpdateDocumentActivity.this,"Please make sure that Vin Number is not empty or longer than 17 characters",Toast.LENGTH_SHORT).show();
+                        }
+                    }else{
+                        Toast.makeText(UpdateDocumentActivity.this, "Please make sure that Expiry date is not empty", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(UpdateDocumentActivity.this,"Please make sure that Plate number is not empty and has valid format",Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(UpdateDocumentActivity.this,"Please make sure that document is either RCA,Rovinietta or ITP",Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            Toast.makeText(UpdateDocumentActivity.this,"Please make sure that Document Type is not empty",Toast.LENGTH_SHORT).show();
+        }
+    }
     public void getDocument(String id) {
         DocumentReference docRef = db.collection("Users")
                 .document(FirebaseAuth.getInstance().getUid())
@@ -128,5 +154,12 @@ public class UpdateDocumentActivity extends AppCompatActivity {
 
     public void goToMainActivity(View view) {
         onBackPressed();
+    }
+
+
+    public boolean plateNumberValidate(String plateNumber){
+        Pattern pattern=Pattern.compile("[^a-zA-Z0-9]");
+        Matcher matcher=pattern.matcher(plateNumber);
+        return matcher.find();
     }
 }

@@ -44,11 +44,10 @@ public class DocumentAdapter extends FirestoreRecyclerAdapter<Document, Document
             holder.documentImage.setBackgroundResource(R.drawable.ic_itp);
         } else if (document.getType().equalsIgnoreCase("RCA")) {
             holder.documentImage.setBackgroundResource(R.drawable.rca);
-        } else {
+        } else if(document.getType().equalsIgnoreCase("Rovinietta")){
             holder.documentImage.setBackgroundResource(R.drawable.ic_rovinieta);
         }
         String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        //holder.documentExpiryDate.setText(document.getExpiryDate());
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
         try {
             Date currentDate1 = format.parse(currentDate);
@@ -56,14 +55,16 @@ public class DocumentAdapter extends FirestoreRecyclerAdapter<Document, Document
             long diff = documentExpiryDate.getTime() - currentDate1.getTime();
             if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) == 1) {
                 holder.documentExpiryDate.setText("Your document is expiring tomorrow");
+                holder.documentExpiryDate.setTextSize(12);
             } else if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= 0) {
                 holder.documentExpiryDate.setTextColor(Color.parseColor("#FF0000"));
-                holder.documentExpiryDate.setTextSize(24);
+                holder.documentExpiryDate.setTextSize(16);
                 holder.documentExpiryDate.setTypeface(Typeface.DEFAULT_BOLD);
-                holder.documentExpiryDate.setText("Document expired "+TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)+" ago");
+                holder.documentExpiryDate.setText("Document expired " + Math.abs(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)) + " days ago");
                 holder.documentImage.setBackgroundResource(R.drawable.ic_expired_bg);
             } else {
-                holder.documentExpiryDate.setText("Days " + TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS));
+                holder.documentExpiryDate.setText("Days " + TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)+" until this document will expire");
+                holder.documentExpiryDate.setTextSize(12);
             }
         } catch (ParseException e) {
             e.printStackTrace();
