@@ -7,14 +7,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -37,7 +35,6 @@ import retrofit2.Response;
 
 public class WeatherActivity extends AppCompatActivity {
 
-    private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     DrawerLayout drawerLayout;
     TextView cityName;
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -63,10 +60,7 @@ public class WeatherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_weather);
         initApp();
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(WeatherActivity.this);
-        // btngetlocation=findViewById(R.id.buttonGetLocation);
-        //String currentCity=getCurrentCity();
         cityName.setText(getCurrentCity());
-        //String cityy="Brasov";
         getWeatherData(cityName.getText().toString().trim());
 
     }
@@ -105,9 +99,7 @@ public class WeatherActivity extends AppCompatActivity {
             if (addresses != null && addresses.size() > 0) {
                 city = addresses.get(0).getLocality();
                 cityCountry.setText(addresses.get(0).getCountryName());
-            } else {
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -188,22 +180,15 @@ public class WeatherActivity extends AppCompatActivity {
         AlertDialog.Builder alertLogout = new AlertDialog.Builder(view.getContext());
         alertLogout.setTitle("Logout");
         alertLogout.setMessage("Are you sure you want to log out?");
-        alertLogout.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //TODO make a method for this code
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(view.getContext(), LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            }
+        alertLogout.setPositiveButton("Yes", (dialog, which) -> {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(view.getContext(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         });
-        alertLogout.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        alertLogout.setNegativeButton("No", (dialog, which) -> {
 
-            }
         });
         alertLogout.show();
     }
@@ -231,25 +216,5 @@ public class WeatherActivity extends AppCompatActivity {
         cityCountry = findViewById(R.id.textViewCountry);
         weatherImage = findViewById(R.id.imageViewWeatherType);
     }
-
-    //    public void getLocation(){
-//        fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-//            @Override
-//            public void onComplete(@NonNull @NotNull Task<Location> task) {
-//                Location location=task.getResult();
-//                if(location!=null){
-//                    try {
-//                        Geocoder geocoder=new Geocoder(WeatherActivity.this,
-//                                Locale.getDefault());
-//                        List<Address> addresses=geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
-//                            cityName.setText(addresses.get(0).getLocality());
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
-//    }
-
 
 }

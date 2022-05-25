@@ -14,10 +14,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Licenta">
+        <activity
+            android:name=".licenta.ui.VerifyITPActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_map_key"/>
+            android:value="@string/google_map_key" />
+
         <activity
             android:name=".licenta.ui.PlacesActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -51,6 +55,11 @@
         <activity
             android:name=".licenta.ui.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <service android:name=".licenta.utils.PushNotificationService" android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"></action>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

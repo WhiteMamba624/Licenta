@@ -20,10 +20,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AddDocumentActivity extends AppCompatActivity {
 
@@ -35,44 +38,75 @@ public class AddDocumentActivity extends AppCompatActivity {
     EditText editTextPlateNumber;
     EditText editTextExpiryDate;
     EditText editTextVinNumber;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_document);
-        buttonAddDocument=findViewById(R.id.addDocumentButton);
-        editTextType=findViewById(R.id.editTextType);
-        editTextPlateNumber=findViewById(R.id.editTextPlateNumber);
-        editTextExpiryDate=findViewById(R.id.editTextExpiryDate);
-        editTextVinNumber=findViewById(R.id.editTextVinNumber);
+        buttonAddDocument = findViewById(R.id.addDocumentButton);
+        editTextType = findViewById(R.id.editTextType);
+        editTextPlateNumber = findViewById(R.id.editTextPlateNumber);
+        editTextExpiryDate = findViewById(R.id.editTextExpiryDate);
+        editTextVinNumber = findViewById(R.id.editTextVinNumber);
         buttonAddDocument.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String type=editTextType.getText().toString().trim();
-                String plateNumber=editTextPlateNumber.getText().toString().trim();
-                String expiryDate=editTextExpiryDate.getText().toString().trim();
-                String vinNumber=editTextVinNumber.getText().toString().trim();
-                Document document=new Document(type,plateNumber,vinNumber,expiryDate);
-                addDocument(document);
-                //addDocument(textType.getText().toString().trim());
+                String type = editTextType.getText().toString().trim();
+                String plateNumber = editTextPlateNumber.getText().toString().trim();
+                String expiryDate = editTextExpiryDate.getText().toString().trim();
+                String vinNumber = editTextVinNumber.getText().toString().trim();
+                String deviceToken= FirebaseMessaging.getInstance().getToken().toString();
+                dataValidation(type,plateNumber,expiryDate,vinNumber,deviceToken);
+//                if (dataValidation(type, plateNumber, expiryDate, vinNumber)) {
+//
+//                } else {
+//                    Toast.makeText(AddDocumentActivity.this, "Please make sure that there are no empty fields", Toast.LENGTH_SHORT).show();
+//                }
             }
         });
     }
 
-    public void addDocument(Document document){
+    public void dataValidation(String type, String plateNumber, String expiryDate, String vinNumber, String deviceToken) {
+        if(!type.isEmpty()){
+            if(type.equalsIgnoreCase("ITP")|| type.equalsIgnoreCase("Rovinietta") || type.equalsIgnoreCase("RCA")){
+                if(!plateNumber.isEmpty()&&!plateNumberValidate(plateNumber)){
+                    if(!expiryDate.isEmpty()){
+                        if(!vinNumber.isEmpty()&&vinNumber.length()<17){
+                            Document document = new Document(type, plateNumber, vinNumber, expiryDate, deviceToken);
+                            addDocument(document);
+                        }else{
+                            Toast.makeText(AddDocumentActivity.this,"Please make sure that Vin Number is not empty or longer than 17 characters",Toast.LENGTH_SHORT).show();
+                        }
+                    }else{
+                        Toast.makeText(AddDocumentActivity.this, "Please make sure that Expiry date is not empty", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(AddDocumentActivity.this,"Please make sure that Plate number is not empty and has valid format",Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(AddDocumentActivity.this,"Please make sure that document is either RCA,Rovinietta or ITP",Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            Toast.makeText(AddDocumentActivity.this,"Please make sure that Document Type is not empty",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void addDocument(Document document) {
         //Document document=new Document(documentType);
         documentRef.add(document)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(AddDocumentActivity.this,"Document added succesfully",Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(AddDocumentActivity.this,MainActivity.class));
+                        Toast.makeText(AddDocumentActivity.this, "Document added succesfully", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(AddDocumentActivity.this, MainActivity.class));
 
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull @NotNull Exception e) {
-                     Toast.makeText(AddDocumentActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddDocumentActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -99,10 +133,18 @@ public class AddDocumentActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(AddDocumentActivity.this,MainActivity.class));
+        startActivity(new Intent(AddDocumentActivity.this, MainActivity.class));
     }
 
     public void goBackToMainActivity(View view) {
         onBackPressed();
     }
+
+    public boolean plateNumberValidate(String plateNumber){
+        Pattern pattern=Pattern.compile("[^a-zA-Z0-9]");
+        Matcher matcher=pattern.matcher(plateNumber);
+        return matcher.find();
+    }
+
+
 }

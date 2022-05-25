@@ -5,15 +5,25 @@ public class Document {
     private String plateNumber;
     private String vinNumber;
     private String expiryDate;
+    private String deviceToken;
 
     public Document(){
     }
 
-    public Document(String type,String plateNumber, String vinNumber, String expiryDate) {
+    public Document(String type, String plateNumber, String vinNumber, String expiryDate, String deviceToken) {
         this.type = type;
         this.plateNumber=plateNumber;
         this.vinNumber=vinNumber;
         this.expiryDate=expiryDate;
+        this.deviceToken = deviceToken;
+    }
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
     }
 
     public String getPlateNumber() {

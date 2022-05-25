@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.gligamihai.licenta.BuildConfig;
 import com.gligamihai.licenta.R;
 import com.gligamihai.licenta.licenta.models.Document;
 import com.gligamihai.licenta.licenta.utils.DocumentAdapter;
@@ -33,14 +34,14 @@ import org.jetbrains.annotations.NotNull;
 public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     TextView currentUserEmail;
-    public static final String INTENT_DOCUMENT_ID="document_id";
-    //TextView test;
+    public static final String INTENT_DOCUMENT_ID = "document_id";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference documentRef = db.collection("Users").document(FirebaseAuth.getInstance().getUid()).collection("Documents");
     private DocumentAdapter documentAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+       // String myApiKey= BuildConfig.MAPS_API_KEY;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -49,36 +50,29 @@ public class MainActivity extends AppCompatActivity {
         if (user != null) {
             currentUserEmail.setText(user.getEmail());
         } else {
-            //TODO treat exception
-            Toast.makeText(this, "Nu a mers", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
         }
         setUpRecyclerView();
-        FloatingActionButton fab=findViewById(R.id.addDocumentFab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToAddDocumentActivity();
-            }
-        });
-       // fab.show();
-
-        //  test=findViewById(R.id.hometext);
-//        db.collection("Users")
-//                .document(FirebaseAuth.getInstance().getUid())
-//                .collection("Documents")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//                                Log.d("TAG", document.getId() + " => " + document.getData());
-//                            }
-//                        } else {
-//                            Log.w("TAG", "Error getting documents.", task.getException());
-//                        }
+        FloatingActionButton fab = findViewById(R.id.addDocumentFab);
+        fab.setOnClickListener(v -> goToAddDocumentActivity());
+        //TODO code for nodejs
+//        db.collection("Users").document().collection("Documents")
+//                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                       Document documentRetrieved= document.toObject(Document.class);
+//                       documentRetrieved.getExpiryDate()
+//
+//                      //  Log.d(TAG, document.getId() + " => " + document.getData());
 //                    }
-//                });
+//                } else {
+//                    //Log.w(TAG, "Error getting documents.", task.getException());
+//                }
+//            }
+//        });
+
     }
 
     public void setUpRecyclerView() {
@@ -105,41 +99,31 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
-               new AlertDialog.Builder(viewHolder.itemView.getContext())
-                       .setMessage("Are you sure you want to delete this document?")
-                       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                           @Override
-                           public void onClick(DialogInterface dialog, int which) {
-                               documentAdapter.deleteDocument(viewHolder.getBindingAdapterPosition());
-                           }
-                       })
-                       .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                           @Override
-                           public void onClick(DialogInterface dialog, int which) {
-                               documentAdapter.notifyItemChanged(viewHolder.getBindingAdapterPosition());
-                           }
-                       })
-                       .create()
-                       .show();
+                new AlertDialog.Builder(viewHolder.itemView.getContext())
+                        .setMessage("Are you sure you want to delete this document?")
+                        .setPositiveButton("Yes", (dialog, which) -> documentAdapter.deleteDocument(viewHolder.getBindingAdapterPosition()))
+                        .setNegativeButton("No", (dialog, which) -> documentAdapter.notifyItemChanged(viewHolder.getBindingAdapterPosition()))
+                        .create()
+                        .show();
 
             }
         }).attachToRecyclerView(recyclerView);
         documentAdapter.setOnItemClickListeners(new DocumentAdapter.OnItemClickListeners() {
             @Override
             public void onItemLongClick(DocumentSnapshot documentSnapshot, int position) {
-                String id=documentSnapshot.getId();
+                String id = documentSnapshot.getId();
                 //Toast.makeText(MainActivity.this,id,Toast.LENGTH_SHORT).show();
-                Intent goToUpdateDocumentActivity=new Intent(MainActivity.this,UpdateDocumentActivity.class);
-                goToUpdateDocumentActivity.putExtra(INTENT_DOCUMENT_ID,id);
+                Intent goToUpdateDocumentActivity = new Intent(MainActivity.this, UpdateDocumentActivity.class);
+                goToUpdateDocumentActivity.putExtra(INTENT_DOCUMENT_ID, id);
                 startActivity(goToUpdateDocumentActivity);
             }
 
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
-                String id=documentSnapshot.getId();
+                String id = documentSnapshot.getId();
                 //Toast.makeText(MainActivity.this,id,Toast.LENGTH_SHORT).show();
-                Intent goToDocumentInfoActivity=new Intent(MainActivity.this,DocumentInfoActivity.class);
-                goToDocumentInfoActivity.putExtra(INTENT_DOCUMENT_ID,id);
+                Intent goToDocumentInfoActivity = new Intent(MainActivity.this, DocumentInfoActivity.class);
+                goToDocumentInfoActivity.putExtra(INTENT_DOCUMENT_ID, id);
                 startActivity(goToDocumentInfoActivity);
             }
         });
@@ -183,39 +167,37 @@ public class MainActivity extends AppCompatActivity {
         recreate();
     }
 
-    public void clickWeather(View view){
-        startActivity(new Intent(MainActivity.this,WeatherActivity.class));
+    public void clickWeather(View view) {
+        startActivity(new Intent(MainActivity.this, WeatherActivity.class));
     }
-    public  void clickLogout(View view) {
+
+    public void clickLogout(View view) {
         AlertDialog.Builder alertLogout = new AlertDialog.Builder(view.getContext());
         alertLogout.setTitle("Logout");
         alertLogout.setMessage("Are you sure you want to log out?");
-        alertLogout.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //TODO make a method for this code
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(view.getContext(), LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            }
+        alertLogout.setPositiveButton("Yes", (dialog, which) -> {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(view.getContext(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         });
-        alertLogout.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        alertLogout.setNegativeButton("No", (dialog, which) -> {
 
-            }
         });
         alertLogout.show();
     }
 
-    public void goToAddDocumentActivity(){
-        Intent intent=new Intent(MainActivity.this, AddDocumentActivity.class);
+    public void goToAddDocumentActivity() {
+        Intent intent = new Intent(MainActivity.this, AddDocumentActivity.class);
         startActivity(intent);
     }
 
-    public void clickPlaces(View view){
-        startActivity(new Intent(MainActivity.this,PlacesActivity.class));
+    public void clickPlaces(View view) {
+        startActivity(new Intent(MainActivity.this, PlacesActivity.class));
+    }
+
+    public void clickVerifyRCA(View view){
+        startActivity(new Intent(MainActivity.this, VerifyITPActivity.class));
     }
 }
